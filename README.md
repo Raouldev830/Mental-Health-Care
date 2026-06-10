@@ -16,6 +16,10 @@ This repository contains a prototype Mental Health Care application built as par
 - Serve frontend and backend from a single FastAPI app
 - Interactive API documentation available at `/api/docs`
 
+## Screenshot
+
+![API docs example](images/api-docs-response.svg)
+
 ## Getting started
 
 1. Navigate to the project folder:
