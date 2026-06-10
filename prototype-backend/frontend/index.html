@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IMHIHMS Prototype</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">IMHIHMS Prototype</p>
+        <h1>Patient registration and search</h1>
+        <p class="tagline">A lightweight patient intake UI for Cameroon’s maternal and child health care prototype.</p>
+      </div>
+      <div class="hero-links">
+        <a href="/api/docs" target="_blank" class="button secondary">API docs</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="card grid-two">
+        <div>
+          <h2>Register a patient</h2>
+          <form id="patient-form" class="form-grid">
+            <label>
+              Full name
+              <input type="text" name="full_name" required />
+            </label>
+            <label>
+              Date of birth
+              <input type="date" name="date_of_birth" required />
+            </label>
+            <label>
+              Sex
+              <select name="sex">
+                <option value="">Select</option>
+                <option value="F">Female</option>
+                <option value="M">Male</option>
+                <option value="O">Other</option>
+              </select>
+            </label>
+            <label>
+              Region
+              <input type="text" name="region" placeholder="Center" />
+            </label>
+            <label>
+              District
+              <input type="text" name="district" placeholder="Douala" />
+            </label>
+            <label>
+              Contact
+              <input type="tel" name="contact" placeholder="+237600000000" />
+            </label>
+            <button type="submit" class="button">Register patient</button>
+          </form>
+          <div id="registration-message" class="message" aria-live="polite"></div>
+        </div>
+
+        <div>
+          <h2>Search patients</h2>
+          <div class="search-group">
+            <input id="search-query" type="search" placeholder="Search by name or NHI" />
+            <button id="search-button" class="button secondary">Search</button>
+          </div>
+          <div id="search-message" class="message" aria-live="polite"></div>
+          <div class="table-wrapper">
+            <table id="results-table">
+              <thead>
+                <tr>
+                  <th>NHI</th>
+                  <th>Name</th>
+                  <th>DOB</th>
+                  <th>Sex</th>
+                  <th>Region</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

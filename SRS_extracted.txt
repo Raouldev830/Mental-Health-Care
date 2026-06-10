@@ -1,0 +1,1669 @@
+SOFTWARE REQUIREMENTS SPECIFICATION
+
+Integrated Mental Health & Infant Healthcare Management System
+
+Republic of Cameroon
+
+Document Reference: CMR-HEALTH-SRS-001
+
+Version: 1.0
+
+Date: June 2026
+
+Classification: CONFIDENTIAL
+
+Prepared for:
+
+Ministry of Public Health (MINSANTE)
+
+Republic of Cameroon
+
+Revision History
+
+Version
+
+Date
+
+Author(s)
+
+Description
+
+1.0
+
+June 2026
+
+Project Team
+
+Initial Release
+
+1.1
+
+TBD
+
+—
+
+Pending stakeholder review
+
+Table of Contents
+
+1.  Introduction	4
+
+2.  Overall Description	6
+
+3.  Stakeholders & Users	8
+
+4.  Functional Requirements	10
+
+5.  Non-Functional Requirements	20
+
+6.  System Architecture Overview	23
+
+7.  External Interface Requirements	25
+
+8.  Data Requirements	27
+
+9.  Security & Compliance	29
+
+10.  Constraints & Assumptions	31
+
+11.  Glossary	33
+
+12.  Appendices	35
+
+1. Introduction
+
+1.1 Purpose
+
+This Software Requirements Specification (SRS) defines the complete functional and non-functional requirements for the Integrated Mental Health and Infant Healthcare Management System (IMHIHMS) for the Republic of Cameroon. The document is intended to serve as the authoritative reference for design, development, testing, deployment, and maintenance of the system.
+
+This SRS is prepared in accordance with IEEE Std 830-1998 (IEEE Recommended Practice for Software Requirements Specifications) and aligned with the World Health Organization (WHO) mhGAP Intervention Guide, the Cameroon National Health Development Plan (PNDS 2021–2025), and UNICEF's child health frameworks.
+
+1.2 Scope
+
+The IMHIHMS is a digital health platform designed to improve healthcare delivery for two priority population groups in Cameroon:
+
+Mental Health Patients: individuals experiencing psychiatric disorders, depression, anxiety, substance use disorders, epilepsy, and other neurological conditions.
+
+Infants and Children (0–5 years): covering antenatal care tracking, neonatal screening, immunisation management, growth monitoring, and malnutrition detection.
+
+The system will be deployed across public health facilities nationwide — district hospitals, health centres, and community health posts — with priority phasing in the ten regions. It will operate in connected, low-bandwidth, and offline environments.
+
+Out of scope: private hospital billing systems, adult surgical care, dental care, and any clinical decision-making not covered by mhGAP or EPI protocols.
+
+1.3 Definitions, Acronyms & Abbreviations
+
+See Section 11 (Glossary) for the complete list of terms used in this document.
+
+1.4 References
+
+WHO mhGAP Intervention Guide v2.0 — Mental Health Gap Action Programme, WHO, Geneva (2016).
+
+Cameroon National Health Development Plan (PNDS 2021–2025) — Ministry of Public Health.
+
+UNICEF Integrated Management of Childhood Illness (IMCI) Protocol.
+
+WHO Child Growth Standards (0–5 years), WHO, Geneva (2006).
+
+IEEE Std 830-1998: IEEE Recommended Practice for Software Requirements Specifications.
+
+Law No. 96/03 of 4 January 1996 laying down the framework law on Health in Cameroon.
+
+Law No. 2010/012 on Cybersecurity and Cybercrime in Cameroon.
+
+HL7 FHIR R4 Standard — Health Level Seven International.
+
+Expanded Programme on Immunisation (EPI) Schedule — MINSANTE Cameroon.
+
+1.5 Overview of Document
+
+The remainder of this document is structured as follows: Section 2 provides the overall product description including context and constraints; Section 3 describes stakeholders and user classes; Sections 4 and 5 define functional and non-functional requirements respectively; Sections 6–8 cover architecture, interfaces, and data requirements; Sections 9–10 address security, compliance, constraints, and assumptions; and Sections 11–12 provide the glossary and appendices.
+
+2. Overall Description
+
+2.1 Product Perspective
+
+IMHIHMS is a new, purpose-built system that will integrate with Cameroon's existing Health Information System (HIS), specifically the District Health Information Software 2 (DHIS2) instance maintained by MINSANTE. It does not replace DHIS2 but supplements it with specialised clinical workflow modules not currently available in the national platform.
+
+The system operates as a web-based application accessible from desktop browsers and as a Progressive Web App (PWA) on Android and iOS mobile devices. A lightweight Android APK will also be provided for facilities with very limited connectivity.
+
+2.2 Product Functions (Summary)
+
+At a high level, the system provides the following major capabilities:
+
+Patient registration and unique national health identifier (NHI) management.
+
+Mental health screening, diagnosis support (mhGAP-aligned), treatment planning, and follow-up.
+
+Infant health record management including antenatal care, birth registration, EPI immunisation schedule, growth monitoring, and IMCI assessment.
+
+Appointment scheduling and case follow-up for both modules.
+
+Community health worker (CHW) field data collection with offline sync.
+
+Aggregate and individual reporting, dashboards, and analytics.
+
+Referral management between community, district, and regional levels.
+
+Role-based access control and comprehensive audit logging.
+
+Integration with DHIS2 for aggregate national reporting.
+
+2.3 User Classes and Characteristics
+
+See Section 3 for a detailed stakeholder and user class analysis. Primary user classes include: Clinical Staff (psychiatrists, paediatricians, nurses), Community Health Workers, Health Facility Administrators, Regional Health Officers, and National Administrators.
+
+2.4 Operating Environment
+
+Web browsers: Chrome 110+, Firefox 110+, Edge 110+ (desktop and Android).
+
+Mobile OS: Android 8.0+ (primary), iOS 14+ (secondary).
+
+Server OS: Ubuntu 22.04 LTS on-premise or cloud-hosted (AWS/Azure/local data centre).
+
+Database: PostgreSQL 14+.
+
+Network: Must function over GPRS (2G, ~50 kbps) in offline-first mode; full functionality requires 3G or better.
+
+Electricity: Must tolerate intermittent power; client devices must cache data locally for at least 72 hours of offline operation.
+
+2.5 Design and Implementation Constraints
+
+All patient data must be stored on servers physically located within the Republic of Cameroon.
+
+The user interface must support both French and English (Cameroon's two official languages) as primary languages; support for Fulfulde and Pidgin English is desirable.
+
+The system must be compatible with the national DHIS2 instance using the DHIS2 Web API v2.39+.
+
+The system must comply with the WHO mhGAP Intervention Guide v2.0 clinical protocols.
+
+Open-source or government-licensed software components must be preferred to minimise licensing costs.
+
+The initial deployment budget constrains infrastructure to a maximum of two dedicated application servers and one database server at the national level.
+
+2.6 Assumptions and Dependencies
+
+MINSANTE will provide a unique National Health Identifier (NHI) scheme; if unavailable at launch, the system will generate a temporary local identifier with a migration path.
+
+DHIS2 national instance remains available for aggregate data export.
+
+Participating health facilities have at least one Android device per module.
+
+Training will be provided to all end users prior to go-live.
+
+Uninterrupted power supply (UPS) or solar backup is available at district hospitals.
+
+3. Stakeholders & Users
+
+3.1 Stakeholder Register
+
+Stakeholder
+
+Role
+
+Interest
+
+Influence
+
+Ministry of Public Health (MINSANTE)
+
+Regulator / Sponsor
+
+Policy compliance, national health goals
+
+High
+
+Regional Health Delegations
+
+Operational Owner
+
+Regional deployment, supervision
+
+High
+
+Psychiatrists / Pediatricians
+
+Primary User
+
+Clinical accuracy, ease of use
+
+High
+
+Community Health Workers (CHWs)
+
+Primary User
+
+Offline access, multilingual UI
+
+Medium
+
+Patients / Caregivers
+
+Beneficiary
+
+Privacy, accessibility
+
+Medium
+
+WHO / UNICEF / Development Partners
+
+Funder / Advisor
+
+Alignment with global standards
+
+Medium
+
+IT Department / System Administrators
+
+Technical Owner
+
+Maintainability, security
+
+Medium
+
+3.2 User Classes
+
+3.2.1 Clinical Staff (Psychiatrists, Paediatricians, Nurses)
+
+Highest-privilege clinical users. Work in health facilities with moderate to good connectivity. Require fast access to patient records, clinical decision support, and the ability to enter diagnoses, prescriptions, and referrals. Estimated: ~2,000 users nationally at full rollout.
+
+3.2.2 Community Health Workers (CHWs)
+
+Field-based, semi-literate to literate users operating on mobile devices in remote areas with limited or no connectivity. Require simplified, icon-driven forms in local languages, full offline capability, and guided workflows. Estimated: ~15,000 users nationally.
+
+3.2.3 Health Facility Administrators
+
+Responsible for facility-level configuration, user account management, appointment scheduling oversight, and local reporting. Medium technical literacy. Estimated: ~500 users.
+
+3.2.4 Regional / District Health Officers
+
+Supervisory users who review aggregate data, monitor KPIs, and produce reports for regional delegations. Access dashboards and export tools. Estimated: ~200 users.
+
+3.2.5 National Administrators (MINSANTE IT)
+
+Super-administrators with access to system configuration, national analytics, DHIS2 integration management, and audit logs. Estimated: ~10 users.
+
+3.2.6 Patients / Caregivers (Future Phase)
+
+A patient-facing portal / mobile app is planned for Phase 2, allowing caregivers to view immunisation schedules, appointment reminders, and educational content. Requirements for this class are deferred to SRS v2.0.
+
+4. Functional Requirements
+
+4.1 Patient Registration & Identity Management
+
+The system shall manage a unified patient registry for both mental health and infant healthcare modules, ensuring each patient has a unique, persistent identifier.
+
+ID
+
+Requirement
+
+Priority
+
+Status
+
+FR-REG-001
+
+The system shall allow clinical staff to register a new patient with mandatory fields: full name, date of birth, sex, region, health district, and contact information.
+
+Must Have
+
+Draft
+
+FR-REG-002
+
+The system shall generate and assign a unique National Health Identifier (NHI) upon registration, or accept an existing NHI if provided.
+
+Must Have
+
+Draft
+
+FR-REG-003
+
+The system shall allow duplicate-check search by name, date of birth, and NHI before creating a new record, displaying potential duplicates to the user.
+
+Must Have
+
+Draft
+
+FR-REG-004
+
+The system shall support linkage of an infant's record to the mother's record via NHI.
+
+Must Have
+
+Draft
+
+FR-REG-005
+
+The system shall allow authorised staff to update demographic data with a full audit trail of changes.
+
+Must Have
+
+Draft
+
+FR-REG-006
+
+The system shall support patient photograph capture on mobile devices for identity verification.
+
+Should Have
+
+Draft
+
+FR-REG-007
+
+The system shall allow patients to be deactivated (not deleted) when deceased, with date of death recorded.
+
+Must Have
+
+Draft
+
+4.2 Mental Health Module
+
+The mental health module implements workflows aligned with the WHO mhGAP Intervention Guide v2.0, covering screening, assessment, diagnosis support, treatment planning, prescriptions, and follow-up.
+
+4.2.1 Screening & Assessment
+
+ID
+
+Requirement
+
+Priority
+
+Status
+
+FR-MH-001
+
+The system shall provide digital versions of the following validated screening tools: PHQ-9 (depression), GAD-7 (anxiety), AUDIT (alcohol use), DAST-10 (drug use), and the mhGAP Symptom Rating Scale.
+
+Must Have
+
+Draft
+
+FR-MH-002
+
+The system shall calculate and display screening scores automatically upon completion and flag high-risk scores with visual alerts requiring clinical review.
+
+Must Have
+
+Draft
+
+FR-MH-003
+
+The system shall provide mhGAP-aligned differential diagnosis prompts for the following priority conditions: depression, psychosis, bipolar disorder, epilepsy/seizures, substance use disorders, self-harm/suicide risk, and child/adolescent mental health conditions.
+
+Must Have
+
+Draft
+
+FR-MH-004
+
+The system shall include a mandatory suicide risk assessment for any patient with a PHQ-9 score >= 10, presenting a standardised risk stratification (low / moderate / high) and recommended actions.
+
+Must Have
+
+Draft
+
+FR-MH-005
+
+The system shall allow free-text clinical notes with structured tagging (SOAP format: Subjective, Objective, Assessment, Plan).
+
+Must Have
+
+Draft
+
+FR-MH-006
+
+The system shall record the date, time, and identity of the clinician for every assessment entry.
+
+Must Have
+
+Draft
+
+4.2.2 Diagnosis & Treatment Planning
+
+ID
+
+Requirement
+
+Priority
+
+Status
+
+FR-MH-007
+
+The system shall allow clinicians to record one or more ICD-11 diagnoses (chapter 06 — Mental, behavioural or neurodevelopmental disorders) per encounter.
+
+Must Have
+
+Draft
+
+FR-MH-008
+
+The system shall provide mhGAP-based treatment recommendation prompts linked to each diagnosis, which clinicians may accept, modify, or override with a documented reason.
+
+Must Have
+
+Draft
+
+FR-MH-009
+
+The system shall allow clinicians to create a structured care plan including: treatment goals, medication, psychosocial interventions, review schedule, and crisis plan.
+
+Must Have
+
+Draft
+
+FR-MH-010
+
+The system shall maintain a medication formulary consistent with the Cameroon National Essential Medicines List (NEML) and flag prescribed medications not on the formulary.
+
+Must Have
+
+Draft
+
+FR-MH-011
+
+The system shall check for drug-drug interactions for any medications on the NEML and display clinical alerts when a potential interaction is detected.
+
+Should Have
+
+Draft
+
+FR-MH-012
+
+The system shall allow prescription generation with fields for drug name, dosage, frequency, duration, and dispensing instructions, printable in French and English.
+
+Must Have
+
+Draft
+
+4.2.3 Mental Health Follow-Up & Case Management
+
+ID
+
+Requirement
+
+Priority
+
+Status
+
+FR-MH-013
+
+The system shall track treatment adherence across visits by recording whether the patient took prescribed medications since the last visit.
+
+Must Have
+
+Draft
+
+FR-MH-014
+
+The system shall generate automated follow-up reminders (SMS or in-app notification) for mental health patients who miss a scheduled appointment.
+
+Must Have
+
+Draft
+
+FR-MH-015
+
+The system shall display a chronological clinical timeline for each patient showing all encounters, assessments, diagnoses, medications, and referrals.
+
+Must Have
+
+Draft
+
+FR-MH-016
+
+The system shall support case closure workflow with a documented reason (recovered, transferred, lost to follow-up, deceased).
+
+Must Have
+
+Draft
+
+FR-MH-017
+
+The system shall provide a community follow-up assignment tool allowing CHWs to be assigned to specific mental health patients for home visits, with structured visit forms.
+
+Should Have
+
+Draft
+
+4.3 Infant & Child Healthcare Module
+
+This module manages health records for children aged 0–5 years, covering antenatal care, birth records, immunisation, growth monitoring, and IMCI-aligned illness assessment.
+
+4.3.1 Antenatal Care (ANC) & Birth Records
+
+ID
+
+Requirement
+
+Priority
+
+Status
+
+FR-INF-001
+
+The system shall manage antenatal care records for pregnant mothers including ANC visit date, gestational age, blood pressure, weight, haemoglobin level, HIV/syphilis test results, iron/folic acid supplementation, and tetanus vaccination status.
+
+Must Have
+
+Draft
+
+FR-INF-002
+
+The system shall flag high-risk pregnancies based on predefined criteria (e.g., hypertension, anaemia, previous obstetric complications) and display an alert on the patient record.
+
+Must Have
+
+Draft
+
+FR-INF-003
+
+The system shall allow registration of a birth event linked to the mother's ANC record, capturing: date/time of birth, birth weight, gestational age at birth, delivery mode, APGAR scores at 1 and 5 minutes, and facility.
+
+Must Have
+
+Draft
+
+FR-INF-004
+
+The system shall automatically generate an infant health record upon birth registration, pre-populated with mother's information.
+
+Must Have
+
+Draft
+
+FR-INF-005
+
+The system shall record neonatal screening results (e.g., congenital hypothyroidism, sickle cell disease) where screening is available, and alert staff to abnormal results.
+
+Should Have
+
+Draft
+
+4.3.2 Immunisation Management (EPI)
+
+ID
+
+Requirement
+
+Priority
+
+Status
+
+FR-INF-006
+
+The system shall implement the full Expanded Programme on Immunisation (EPI) schedule as defined by MINSANTE Cameroon, including: BCG, OPV, Pentavalent, PCV13, Rota, MR, Yellow Fever, HPV (girls), Meningitis A, and any MINSANTE-approved additions.
+
+Must Have
+
+Draft
+
+FR-INF-007
+
+The system shall calculate and display the due date for each upcoming vaccine based on the child's date of birth.
+
+Must Have
+
+Draft
+
+FR-INF-008
+
+The system shall record each vaccine administered with: vaccine name, date given, dose number, batch/lot number, vaccine provider name, and site of administration.
+
+Must Have
+
+Draft
+
+FR-INF-009
+
+The system shall generate and print a digital vaccination card compliant with the MINSANTE format.
+
+Must Have
+
+Draft
+
+FR-INF-010
+
+The system shall send SMS reminders to caregivers 3 days before a scheduled vaccination is due, where a mobile number is registered.
+
+Must Have
+
+Draft
+
+FR-INF-011
+
+The system shall flag children who are overdue for any vaccine (past due date without recorded administration) and include them in defaulter tracking reports.
+
+Must Have
+
+Draft
+
+FR-INF-012
+
+The system shall allow recording of vaccine adverse events following immunisation (AEFI) and automatically generate an AEFI notification report.
+
+Must Have
+
+Draft
+
+4.3.3 Growth Monitoring & Nutrition
+
+ID
+
+Requirement
+
+Priority
+
+Status
+
+FR-INF-013
+
+The system shall record anthropometric measurements at each visit: weight (kg), length/height (cm), mid-upper arm circumference (MUAC, cm), and head circumference (cm, 0–24 months).
+
+Must Have
+
+Draft
+
+FR-INF-014
+
+The system shall calculate and display WHO z-scores for: Weight-for-Age (WAZ), Height-for-Age (HAZ), Weight-for-Height (WHZ), and BMI-for-Age, using the WHO Child Growth Standards.
+
+Must Have
+
+Draft
+
+FR-INF-015
+
+The system shall automatically classify nutritional status as: Normal, Moderate Acute Malnutrition (MAM), Severe Acute Malnutrition (SAM), or Stunted, based on z-score thresholds and MUAC values.
+
+Must Have
+
+Draft
+
+FR-INF-016
+
+The system shall display a longitudinal growth chart (weight, height, MUAC over time) plotted against WHO reference curves.
+
+Must Have
+
+Draft
+
+FR-INF-017
+
+The system shall trigger an alert and prompt referral to a Nutrition Rehabilitation Centre (NRC) for any child classified as SAM or SAM with complications.
+
+Must Have
+
+Draft
+
+FR-INF-018
+
+The system shall track therapeutic feeding programme enrolment, weekly weight gain, and discharge status for children referred to NRC.
+
+Should Have
+
+Draft
+
+4.3.4 IMCI Illness Assessment
+
+ID
+
+Requirement
+
+Priority
+
+Status
+
+FR-INF-019
+
+The system shall implement a digital IMCI (Integrated Management of Childhood Illness) assessment workflow covering: cough/difficulty breathing, diarrhoea, fever, ear problems, malnutrition/anaemia, and HIV/AIDS assessment for sick children aged 2 months to 5 years.
+
+Must Have
+
+Draft
+
+FR-INF-020
+
+The system shall guide the clinician step-by-step through IMCI danger sign checks and generate a classification (e.g., Severe Pneumonia, Non-Severe Pneumonia, Persistent Diarrhoea) with treatment recommendations.
+
+Must Have
+
+Draft
+
+FR-INF-021
+
+The system shall generate a printable IMCI treatment plan and counselling card in French or English.
+
+Must Have
+
+Draft
+
+4.4 Appointment Scheduling & Referral Management
+
+ID
+
+Requirement
+
+Priority
+
+Status
+
+FR-APT-001
+
+The system shall allow scheduling of appointments for both mental health and infant health modules with fields: patient, provider, date/time, type, and notes.
+
+Must Have
+
+Draft
+
+FR-APT-002
+
+The system shall display a provider-level daily and weekly appointment calendar view.
+
+Must Have
+
+Draft
+
+FR-APT-003
+
+The system shall send SMS appointment reminders to patients/caregivers 24 hours before a scheduled appointment.
+
+Should Have
+
+Draft
+
+FR-APT-004
+
+The system shall allow creation of a structured referral from a lower-level facility to a higher-level facility or specialist, including: reason for referral, clinical summary, urgency level (emergency, urgent, routine), and receiving facility.
+
+Must Have
+
+Draft
+
+FR-APT-005
+
+The system shall track the status of each referral (pending, accepted, completed, rejected) and notify the referring facility upon status change.
+
+Must Have
+
+Draft
+
+FR-APT-006
+
+The system shall allow the receiving facility to attach a consultation response/feedback to the original referral.
+
+Should Have
+
+Draft
+
+4.5 Reporting & Analytics
+
+ID
+
+Requirement
+
+Priority
+
+Status
+
+FR-RPT-001
+
+The system shall provide a configurable dashboard for each user role displaying key performance indicators (KPIs) relevant to their function.
+
+Must Have
+
+Draft
+
+FR-RPT-002
+
+The system shall generate the following standard reports: monthly facility activity summary, mental health caseload report, immunisation coverage report, growth monitoring summary, defaulter lists, and referral activity report.
+
+Must Have
+
+Draft
+
+FR-RPT-003
+
+The system shall allow authorised users to export any report in PDF and Excel formats.
+
+Must Have
+
+Draft
+
+FR-RPT-004
+
+The system shall automatically push agreed aggregate indicators to the national DHIS2 instance on a configurable schedule (default: monthly).
+
+Must Have
+
+Draft
+
+FR-RPT-005
+
+The system shall provide an ad-hoc query builder allowing national administrators to construct custom reports without coding.
+
+Should Have
+
+Draft
+
+FR-RPT-006
+
+The system shall display geographic heat maps at district and regional level for mental health caseload and immunisation coverage.
+
+Should Have
+
+Draft
+
+4.6 User & Access Management
+
+ID
+
+Requirement
+
+Priority
+
+Status
+
+FR-UAM-001
+
+The system shall implement Role-Based Access Control (RBAC) with at minimum the following roles: CHW, Nurse, Clinician, Facility Administrator, Regional Officer, National Administrator.
+
+Must Have
+
+Draft
+
+FR-UAM-002
+
+The system shall enforce that each user can only view and edit records for patients registered at facilities to which they are assigned, unless elevated permissions are granted.
+
+Must Have
+
+Draft
+
+FR-UAM-003
+
+The system shall support multi-factor authentication (MFA) via TOTP app or SMS OTP for all users with facility administrator role and above.
+
+Must Have
+
+Draft
+
+FR-UAM-004
+
+The system shall log all login attempts (successful and failed), data access events, and data modification events with timestamp, user ID, and IP address.
+
+Must Have
+
+Draft
+
+FR-UAM-005
+
+The system shall automatically lock an account after 5 consecutive failed login attempts and notify the facility administrator.
+
+Must Have
+
+Draft
+
+FR-UAM-006
+
+The system shall enforce password complexity requirements: minimum 10 characters, mix of uppercase, lowercase, numbers, and symbols; 90-day rotation for clinical staff and above.
+
+Must Have
+
+Draft
+
+4.7 Offline Operation & Data Synchronisation
+
+ID
+
+Requirement
+
+Priority
+
+Status
+
+FR-OFF-001
+
+The system shall allow CHW mobile users to register patients, complete assessments, record immunisations, and capture growth measurements in full offline mode without any network connectivity.
+
+Must Have
+
+Draft
+
+FR-OFF-002
+
+The system shall automatically synchronise locally stored data with the central server when network connectivity is restored, with conflict resolution defaulting to server-side timestamp precedence.
+
+Must Have
+
+Draft
+
+FR-OFF-003
+
+The system shall notify the user of any sync conflicts and allow manual resolution by an authorised supervisor.
+
+Must Have
+
+Draft
+
+FR-OFF-004
+
+The offline-capable local store shall not retain data for more than 30 days without a successful synchronisation, at which point it shall alert the user and lock data entry pending sync.
+
+Must Have
+
+Draft
+
+5. Non-Functional Requirements
+
+5.1 Performance
+
+ID
+
+Category
+
+Requirement
+
+Metric / Target
+
+NFR-P-001
+
+Response Time
+
+Page load time for any clinical screen shall not exceed 3 seconds on a 3G connection (1 Mbps).
+
+< 3 sec (3G)
+
+NFR-P-002
+
+Response Time
+
+Patient search results shall be returned within 2 seconds for a database of up to 500,000 records.
+
+< 2 sec
+
+NFR-P-003
+
+Throughput
+
+The system shall support a minimum of 500 concurrent active users without performance degradation.
+
+500 users
+
+NFR-P-004
+
+Batch Processing
+
+DHIS2 export jobs for up to 100,000 records shall complete within 10 minutes.
+
+< 10 min
+
+5.2 Availability & Reliability
+
+ID
+
+Category
+
+Requirement
+
+Metric / Target
+
+NFR-A-001
+
+Availability
+
+The central server shall achieve 99.5% uptime measured monthly, excluding scheduled maintenance windows.
+
+99.5% uptime
+
+NFR-A-002
+
+Maintenance Windows
+
+Scheduled maintenance shall occur between 00:00–04:00 WAT on Sundays and shall not exceed 4 hours per month.
+
+Max 4 hrs/month
+
+NFR-A-003
+
+Recovery Time Objective
+
+In the event of a critical server failure, the system shall be restored within 4 hours (RTO).
+
+RTO ≤ 4 hrs
+
+NFR-A-004
+
+Recovery Point Objective
+
+Data backups shall be taken every 6 hours; maximum data loss shall not exceed 6 hours (RPO).
+
+RPO ≤ 6 hrs
+
+NFR-A-005
+
+Data Backup
+
+Backups shall be stored in at least two geographically separate locations within Cameroon.
+
+2 locations
+
+5.3 Scalability
+
+ID
+
+Category
+
+Requirement
+
+Metric / Target
+
+NFR-S-001
+
+Users
+
+The system shall scale to 25,000 registered users without architectural changes.
+
+25,000 users
+
+NFR-S-002
+
+Records
+
+The system shall manage up to 5 million patient records without performance degradation beyond defined thresholds.
+
+5M records
+
+NFR-S-003
+
+Horizontal Scaling
+
+The application tier shall support horizontal scaling via load balancing to accommodate future growth.
+
+Load-balanced
+
+5.4 Usability
+
+ID
+
+Category
+
+Requirement
+
+Metric / Target
+
+NFR-U-001
+
+Language
+
+The user interface shall be fully available in French and English, switchable per user account.
+
+2 languages
+
+NFR-U-002
+
+Literacy
+
+CHW-facing screens shall use icon-based navigation and simple language at a maximum CEFR A2 reading level.
+
+A2 level
+
+NFR-U-003
+
+Training Time
+
+A CHW with basic smartphone literacy shall be able to complete core tasks (register patient, record weight, record vaccine) after a maximum of 4 hours of training.
+
+≤ 4 hrs training
+
+NFR-U-004
+
+Accessibility
+
+The web interface shall comply with WCAG 2.1 Level AA accessibility standards.
+
+WCAG 2.1 AA
+
+NFR-U-005
+
+Error Handling
+
+All form validation errors shall display a human-readable, actionable message in the user's selected language.
+
+Human-readable
+
+5.5 Security
+
+See Section 9 for detailed security and compliance requirements.
+
+ID
+
+Category
+
+Requirement
+
+Metric / Target
+
+NFR-SEC-001
+
+Encryption in Transit
+
+All data in transit shall be encrypted using TLS 1.2 or higher.
+
+TLS 1.2+
+
+NFR-SEC-002
+
+Encryption at Rest
+
+All patient data at rest shall be encrypted using AES-256.
+
+AES-256
+
+NFR-SEC-003
+
+Penetration Testing
+
+The system shall undergo an independent penetration test before go-live and annually thereafter.
+
+Annual pentest
+
+NFR-SEC-004
+
+Session Management
+
+User sessions shall expire after 30 minutes of inactivity for clinical roles.
+
+30 min timeout
+
+5.6 Maintainability & Portability
+
+ID
+
+Category
+
+Requirement
+
+Metric / Target
+
+NFR-M-001
+
+Documentation
+
+All source code shall be documented using standard JSDoc/Python docstrings with a minimum of 80% coverage.
+
+80% coverage
+
+NFR-M-002
+
+Test Coverage
+
+Automated unit and integration tests shall achieve a minimum of 80% code coverage.
+
+80% coverage
+
+NFR-M-003
+
+Containerisation
+
+The application shall be containerised using Docker and orchestrated with Docker Compose or Kubernetes for repeatable deployment.
+
+Docker
+
+NFR-M-004
+
+API Standards
+
+All inter-service communication shall use RESTful APIs following HL7 FHIR R4 where applicable.
+
+FHIR R4
+
+6. System Architecture Overview
+
+6.1 High-Level Architecture
+
+The IMHIHMS adopts a three-tier web application architecture with the following layers:
+
+Presentation Tier: React-based Single Page Application (SPA) / Progressive Web App (PWA), plus an Android APK for offline-first CHW usage.
+
+Application Tier: RESTful API server (Node.js or Django REST Framework), hosting business logic, clinical decision support rules, and integration services.
+
+Data Tier: PostgreSQL 14+ relational database for structured clinical data; object storage (MinIO or equivalent) for documents and images.
+
+A Redis cache layer will be deployed between the application and data tiers to manage session state and frequently accessed reference data (EPI schedules, drug formularies, ICD-11 codes).
+
+6.2 Deployment Architecture
+
+Phase 1 deployment will consist of: one primary application server, one database server, and one hot-standby database replica — all hosted in a Cameroonian data centre. A reverse proxy / load balancer (Nginx) will sit in front of the application server. A dedicated SMS gateway service will handle outbound appointment and vaccination reminders.
+
+Phase 2 will introduce a second application server behind the load balancer and transition to a containerised Kubernetes deployment for improved resilience.
+
+6.3 Integration Architecture
+
+DHIS2 Integration: Aggregate indicator exports via the DHIS2 Web API (v2.39+) using a scheduled batch job. No real-time integration is required in Phase 1.
+
+SMS Gateway: Integration with a local Cameroonian SMS aggregator (e.g., Orange Cameroun API or a country-compliant aggregator) for appointment and vaccination reminders.
+
+National NHI Registry: REST API integration when the national registry becomes available; stub implementation for Phase 1.
+
+7. External Interface Requirements
+
+7.1 User Interfaces
+
+The web application shall use a responsive layout supporting screen widths from 360px (small Android phones) to 1920px (desktop monitors).
+
+The CHW mobile interface shall be a separate, simplified view accessed via the PWA or APK, with large touch targets (minimum 44×44px) and minimal text input.
+
+All date inputs shall use the Gregorian calendar but display in the DD/MM/YYYY format conventional in Cameroon.
+
+The system shall support both French (fr-CM) and English (en-CM) locale settings including number formatting and date display.
+
+7.2 Hardware Interfaces
+
+The system shall interface with Android device cameras for patient photograph capture.
+
+The system shall support Bluetooth-connected weighing scales (SECA or equivalent) for automatic weight capture where available (Phase 2).
+
+The system shall produce print-ready outputs (vaccination cards, prescriptions, referral forms) compatible with standard A4 and A5 printers.
+
+7.3 Software Interfaces
+
+DHIS2 Web API v2.39+: POST aggregate data values and metadata.
+
+SMS Gateway REST API: POST outbound SMS messages; receive delivery receipts.
+
+National NHI Registry API (Phase 2): GET patient identity verification.
+
+Email SMTP: For system notifications and password reset emails.
+
+7.4 Communication Interfaces
+
+HTTPS (TLS 1.2+) for all client-server communication.
+
+WebSockets for real-time dashboard updates and notification delivery.
+
+REST/JSON for all API integrations.
+
+8. Data Requirements
+
+8.1 Data Retention
+
+Patient clinical records shall be retained for a minimum of 25 years from the date of last activity, in line with Cameroonian health regulations.
+
+Audit logs shall be retained for a minimum of 10 years.
+
+Anonymised aggregate statistics shall be retained indefinitely.
+
+8.2 Data Privacy
+
+All personally identifiable information (PII) shall be classified as sensitive personal data and protected accordingly.
+
+Access to individual patient records shall be limited to users directly involved in that patient's care or those with explicit supervisory or auditing roles.
+
+Data anonymisation tools shall be provided for research data exports, removing all direct and quasi-identifiers.
+
+The system shall maintain a complete log of all data access and export events.
+
+8.3 Data Quality
+
+All required fields shall be validated at point of entry with immediate feedback.
+
+Date fields shall reject logically impossible values (e.g., future date of birth, vaccination date before date of birth).
+
+Weight and height values shall be validated against biologically plausible ranges for age and sex, with a warning prompt for outlier values.
+
+Duplicate patient detection shall run before any new record is saved.
+
+8.4 Data Migration
+
+Where facilities have existing paper or digital records, a data migration workbook (Excel template) will be provided for bulk import of historical immunisation records, ANC records, and mental health case lists. Data migration will be a supervised process conducted by trained data entry staff prior to go-live.
+
+9. Security & Compliance
+
+9.1 Applicable Regulations
+
+Law No. 2010/012 on Cybersecurity and Cybercrime in Cameroon.
+
+Law No. 96/03 of 4 January 1996 (Framework Law on Health in Cameroon).
+
+WHO Global Code of Practice on the International Recruitment of Health Personnel.
+
+UNICEF Child Rights and Data Protection guidelines.
+
+HL7 FHIR R4 data standards for health interoperability.
+
+9.2 Authentication & Authorisation
+
+All access shall require authenticated login; no anonymous access to patient data.
+
+RBAC shall enforce least-privilege access: users receive only the permissions required for their role.
+
+Privileged actions (user creation, system configuration, data export) shall require MFA.
+
+OAuth 2.0 / OpenID Connect shall be used for API authentication.
+
+9.3 Data Protection
+
+Patient data at rest: AES-256 encryption using database-level encryption.
+
+Patient data in transit: TLS 1.2+ for all network communication; HSTS enforced.
+
+Database backups: encrypted before storage; encryption keys stored separately from data.
+
+Mobile offline store: encrypted local SQLite database using SQLCipher on Android.
+
+9.4 Audit & Monitoring
+
+All CRUD operations on patient records shall be logged with user ID, timestamp, record ID, and action type.
+
+Audit logs shall be write-once (immutable) and stored separately from the operational database.
+
+The system shall generate security alerts for: repeated failed login attempts, unusual after-hours access patterns, bulk data exports, and privilege escalation attempts.
+
+A security information and event management (SIEM) integration point shall be provided for Phase 2.
+
+9.5 Vulnerability Management
+
+Third-party dependencies shall be scanned for known vulnerabilities using automated tooling (e.g., npm audit, OWASP Dependency-Check) in the CI/CD pipeline.
+
+An independent penetration test shall be conducted before go-live using OWASP Top 10 as the assessment framework.
+
+A responsible disclosure policy and contact channel shall be published.
+
+10. Constraints & Assumptions
+
+10.1 Constraints
+
+Data Sovereignty: All patient data servers must be physically located within Cameroon. Cloud hosting using AWS or Azure is permissible only if Cameroonian data residency zones are used.
+
+Official Languages: The system must support French and English as co-equal official languages; neither may be treated as secondary.
+
+Network Infrastructure: The system must be designed for reliable operation at 2G/GPRS speeds (≥ 50 kbps) for mobile users, with graceful degradation rather than failure.
+
+Budget: Open-source or government-licensed software must be preferred to control total cost of ownership; commercial database licences require ministerial approval.
+
+Clinical Protocols: Clinical decision logic must strictly follow WHO mhGAP v2.0 and MINSANTE-approved EPI schedules; deviations require documented approval from MINSANTE.
+
+Hardware: The system must not require new hardware procurement at facility level beyond a single Android device; it must run on devices as old as Android 8.0 (2017-era hardware).
+
+10.2 Assumptions
+
+MINSANTE will designate a technical focal point and Project Steering Committee to review and approve requirements before development begins.
+
+A national DHIS2 instance is operational and accessible via the DHIS2 Web API v2.39+.
+
+The SMS aggregator integration will support Unicode (UTF-8) messages for bilingual content.
+
+Participating health facilities will have at least one staff member with basic Android smartphone literacy prior to training.
+
+The national NHI scheme will be available by the time Phase 2 of the project begins.
+
+MINSANTE will provide official translations of all clinical forms and instructions in both French and English.
+
+11. Glossary
+
+Term / Abbreviation
+
+Definition
+
+AEFI
+
+Adverse Event Following Immunisation — An untoward medical occurrence following immunisation that does not necessarily have a causal relationship.
+
+ANC
+
+Antenatal Care — Health care provided to pregnant women during pregnancy.
+
+AUDIT
+
+Alcohol Use Disorders Identification Test — A 10-item WHO screening tool for alcohol misuse.
+
+CHW
+
+Community Health Worker — A health worker from the community, typically with less formal clinical training, deployed for primary care outreach.
+
+DHIS2
+
+District Health Information Software 2 — An open-source health management information system used as Cameroon's national aggregate HIS.
+
+EPI
+
+Expanded Programme on Immunisation — MINSANTE-managed national immunisation programme.
+
+FHIR
+
+Fast Healthcare Interoperability Resources — An HL7 standard for exchanging healthcare information electronically.
+
+GAD-7
+
+Generalised Anxiety Disorder 7-item Scale — A validated screening tool for anxiety disorders.
+
+HAZ
+
+Height-for-Age Z-score — A WHO growth standard metric indicating stunting when below -2 SD.
+
+ICD-11
+
+International Classification of Diseases, 11th Revision — WHO's standard for coding health conditions.
+
+IMCI
+
+Integrated Management of Childhood Illness — A WHO/UNICEF clinical assessment framework for sick children.
+
+IMHIHMS
+
+Integrated Mental Health and Infant Healthcare Management System — The system described in this SRS.
+
+MAM
+
+Moderate Acute Malnutrition — Nutritional status defined by WHZ between -3 and -2 SD or MUAC 115–124 mm.
+
+mhGAP
+
+Mental Health Gap Action Programme — A WHO programme providing clinical decision guides for mental health in non-specialised settings.
+
+MINSANTE
+
+Ministère de la Santé Publique — Ministry of Public Health, Republic of Cameroon.
+
+MUAC
+
+Mid-Upper Arm Circumference — Anthropometric measurement used to screen for acute malnutrition.
+
+NHI
+
+National Health Identifier — A unique identifier assigned to each patient in Cameroon.
+
+NEML
+
+National Essential Medicines List — MINSANTE's list of approved medicines for public facilities.
+
+NRC
+
+Nutrition Rehabilitation Centre — A facility providing therapeutic care for severely malnourished children.
+
+PHQ-9
+
+Patient Health Questionnaire 9 — A validated 9-item depression screening tool.
+
+PNDS
+
+Plan National de Développement Sanitaire — Cameroon's National Health Development Plan.
+
+PWA
+
+Progressive Web App — A web application that can be installed on a mobile device and used offline.
+
+RBAC
+
+Role-Based Access Control — A method of restricting system access based on user roles.
+
+RPO
+
+Recovery Point Objective — Maximum acceptable data loss in time in the event of a system failure.
+
+RTO
+
+Recovery Time Objective — Maximum acceptable system downtime before restoration after failure.
+
+SAM
+
+Severe Acute Malnutrition — Nutritional status defined by WHZ below -3 SD or MUAC < 115 mm.
+
+SOAP
+
+Subjective, Objective, Assessment, Plan — A structured clinical note format.
+
+SRS
+
+Software Requirements Specification — This document.
+
+TLS
+
+Transport Layer Security — Cryptographic protocol for secure communication over a network.
+
+WAZ
+
+Weight-for-Age Z-score — A WHO growth standard metric.
+
+WHZ
+
+Weight-for-Height Z-score — A WHO growth standard metric indicating wasting when below -2 SD.
+
+WHO
+
+World Health Organisation.
+
+12. Appendices
+
+Appendix A — EPI Immunisation Schedule (Cameroon)
+
+Age
+
+Vaccine
+
+Route
+
+Dose
+
+Site
+
+Birth
+
+BCG, OPV0
+
+ID, Oral
+
+1
+
+Left arm
+
+6 weeks
+
+OPV1, Penta1, PCV1, Rota1
+
+Oral/IM/IM/Oral
+
+1
+
+Thigh
+
+10 weeks
+
+OPV2, Penta2, PCV2, Rota2
+
+Oral/IM/IM/Oral
+
+2
+
+Thigh
+
+14 weeks
+
+OPV3, Penta3, PCV3, IPV
+
+Oral/IM/IM/IM
+
+3
+
+Thigh
+
+9 months
+
+MR, Yellow Fever, Mén A
+
+SC/SC/SC
+
+1
+
+Left arm
+
+15–18 months
+
+MR2
+
+SC
+
+2
+
+Left arm
+
+9–14 yrs (girls)
+
+HPV (2 doses)
+
+IM
+
+1 & 2
+
+Upper arm
+
+Note: This schedule is based on MINSANTE EPI guidelines as of the date of this document. The system shall support schedule updates through the administration panel without code changes.
+
+Appendix B — mhGAP Priority Conditions Covered
+
+Depression (DEP)
+
+Psychosis (PSY)
+
+Bipolar Disorder (BIP)
+
+Epilepsy / Seizures (EPI)
+
+Child & Adolescent Mental Health (CAM)
+
+Dementia (DEM)
+
+Substance Use Disorders — Alcohol (SUB-Alc)
+
+Substance Use Disorders — Drugs (SUB-Drug)
+
+Self-Harm / Suicide (SUI)
+
+Other Significant Mental Health Complaints (OTH)
+
+Appendix C — Requirement Traceability Matrix (RTM) — Placeholder
+
+A full RTM mapping each functional requirement to its source (policy, clinical protocol, or stakeholder need), design component, test case, and acceptance criterion will be maintained as a separate living document (CMR-HEALTH-RTM-001) updated throughout the development lifecycle.
+
+Appendix D — Document Approval
+
+Name
+
+Role
+
+Signature
+
+Date
+
+Director, Digital Health MINSANTE
+
+Chief Medical Officer, Mental Health
+
+Chief Medical Officer, Paediatrics
+
+Project Manager
+
+Lead Systems Analyst
+
+This document requires signatures from all approvers listed above before development may commence.
